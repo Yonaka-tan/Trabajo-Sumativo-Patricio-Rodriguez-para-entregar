@@ -38,13 +38,13 @@ function clamp(value, min, max) {
 
 // Music and sound paths
 const musicPaths = {
-    easy: 'sonidos (4to)/Void_Explorer.ogg',
-    hard: 'sonidos (4to)/Congratulations,_you_beat_the_Tutorial.ogg',
-    symphony: 'sonidos (4to)/Won\'t_you_hear_my_Symphony_.mp3',
-    findYourFlame: 'sonidos (4to)/Find-your-Flame.mp3',
-    inescapable: 'sonidos (4to)/AudioInescapable.ogg',
-    practice: 'sonidos (4to)/Conviction_(feat._SPIRIT_GARDEN_).ogg',
-    failure: 'sonidos (4to)/Subspace-Sequence.mp3'
+    easy: 'Musica 3/Void_Explorer.ogg',
+    hard: 'Musica 1/Congratulations,_you_beat_the_Tutorial.ogg',
+    symphony: 'Musica 3/Won\'t_you_hear_my_Symphony_.mp3',
+    findYourFlame: 'Musica 1/Find-your-Flame.mp3',
+    inescapable: 'Musica 4/AudioInescapable.ogg',
+    practice: 'Musica 1/Conviction_(feat._SPIRIT_GARDEN_).ogg',
+    failure: 'Musica 3/Subspace-Sequence.mp3'
 };
 
 const cadencePaths = {

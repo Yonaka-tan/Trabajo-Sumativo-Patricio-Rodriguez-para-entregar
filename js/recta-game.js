@@ -3,13 +3,13 @@ function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)
 function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
 
 const musicPaths = {
-    easy: 'sonidos (4to)/Void_Explorer.ogg',
-    hard: 'sonidos (4to)/Congratulations,_you_beat_the_Tutorial.ogg',
-    symphony: 'sonidos (4to)/Won\'t_you_hear_my_Symphony_.mp3',
-    findYourFlame: 'sonidos (4to)/Find-your-Flame.mp3',
-    inescapable: 'sonidos (4to)/AudioInescapable.ogg',
-    tutorial: 'sonidos (4to)/Subspace-Sequence.mp3',
-    failure: 'sonidos (4to)/Subspace-Sequence.mp3',
+    easy: 'Musica 3/Void_Explorer.ogg',
+    hard: 'Musica 1/Congratulations,_you_beat_the_Tutorial.ogg',
+    symphony: 'Musica 3/Won\'t_you_hear_my_Symphony_.mp3',
+    findYourFlame: 'Musica 1/Find-your-Flame.mp3',
+    inescapable: 'Musica 4/AudioInescapable.ogg',
+    tutorial: 'Musica 3/Subspace-Sequence.mp3',
+    failure: 'Musica 3/Subspace-Sequence.mp3',
     menuNostalgic: 'sonidos (4to)/Menu_Nostalgic.ogg'
 };
 
