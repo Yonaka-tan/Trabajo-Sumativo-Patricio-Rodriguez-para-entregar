@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lección — Nullscape</title>
+    <link rel="stylesheet" href="../css/nullscape.css">
+</head>
+<body>
+    <main class="stub-page">
+        <section class="stub-panel void-panel">
+            <span id="mode-badge" class="stub-badge">Modo</span>
+            <h1 id="lesson-title">Tema</h1>
+            <img id="stub-enemy" class="stub-enemy" src="" alt="Adversario">
+            <p id="lesson-message">En construcción — el vacío aún no está listo.</p>
+            <p id="lesson-player"></p>
+            <button id="back-btn" class="action-btn back-btn" type="button">Volver</button>
+        </section>
+    </main>
+
+    <script src="../js/enemies.js"></script>
+    <script src="../js/topics.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const topicId = params.get('topic');
+        const modeId = params.get('mode');
+
+        const topic = mathTopics.find((item) => item.id === topicId);
+        const mode = topicModes[modeId];
+        const identity = sessionStorage.getItem('grade4Identity');
+        const enemyKey = sessionStorage.getItem('grade4Enemy');
+        const enemy = enemies[enemyKey];
+
+        const modeBadge = document.getElementById('mode-badge');
+        const lessonTitle = document.getElementById('lesson-title');
+        const lessonMessage = document.getElementById('lesson-message');
+        const lessonPlayer = document.getElementById('lesson-player');
+        const stubEnemy = document.getElementById('stub-enemy');
+        const backBtn = document.getElementById('back-btn');
+
+        if (!topic || !mode || !identity || !enemy) {
+            lessonTitle.textContent = 'Sesión no encontrada';
+            lessonMessage.textContent = 'Regresa al inicio y elige tu adversario de nuevo.';
+            modeBadge.textContent = 'Error';
+            backBtn.addEventListener('click', () => {
+                window.location.href = '../index.html';
+            });
+        } else {
+            document.title = `${topic.title} — ${mode.label}`;
+            modeBadge.textContent = `${mode.icon} ${mode.label}`;
+            lessonTitle.textContent = topic.title;
+            lessonMessage.textContent = `En construcción — el vacío aún no está listo para ${topic.title.toLowerCase()} en modo ${mode.label.toLowerCase()}.`;
+            lessonPlayer.textContent = `${identity} contra ${enemy.label}. ${mode.tagline}.`;
+            stubEnemy.src = enemy.icon;
+            stubEnemy.alt = enemy.label;
+
+            backBtn.addEventListener('click', () => {
+                window.location.href = '../index.html';
+            });
+        }
+    </script>
+</body>
+</html>

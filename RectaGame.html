@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recta Numérica - Nullscape</title>
+    <link rel="stylesheet" href="css/nullscape.css">
+</head>
+<body class="index-body recta-body">
+    <main class="game-page recta-page">
+        <aside class="avatar-presence" id="avatar-presence" aria-hidden="true"></aside>
+
+        <header class="game-header">
+            <a class="back-link-page" href="index.html">Regresar</a>
+            <div>
+                <p>Juego secuencial</p>
+                <h1>Recta Numérica</h1>
+            </div>
+            <button id="open-tutorial-btn" class="action-btn back-btn" type="button">Guia / tutorial</button>
+        </header>
+
+        <section class="game-shell">
+            <section class="mode-panel void-panel side-panel">
+                <div class="player-strip">
+                    <img id="selected-avatar-icon" src="" alt="Avatar">
+                    <div>
+                        <span id="selected-avatar-label">Avatar</span>
+                        <strong id="selected-player-name">Visitante</strong>
+                    </div>
+                </div>
+
+                <div class="mode-grid">
+                    <button class="mode-card void-panel compact" type="button" data-mode="aprendizaje">
+                        <strong>Aprendizaje</strong>
+                        <span>Ayuda</span>
+                    </button>
+                    <button class="mode-card void-panel compact" type="button" data-mode="prueba">
+                        <strong>Prueba</strong>
+                        <span>15 ejercicios</span>
+                    </button>
+                    <button class="mode-card void-panel compact locked" id="game-mode-btn" type="button" data-mode="juego">
+                        <strong>Juego</strong>
+                        <span id="game-lock-text">Bloqueado</span>
+                    </button>
+                </div>
+
+                <div class="glossary-box compact mini-help">
+                    <span><b>Patrón:</b> regla de la serie</span>
+                    <span><b>Paso:</b> diferencia fija</span>
+                    <span><b>Faltante:</b> número escondido</span>
+                </div>
+            </section>
+
+            <section class="exercise-panel void-panel center-panel">
+                <div class="exercise-topline">
+                    <div>
+                        <span id="mode-label">Elige un modo</span>
+                        <h2 id="game-title">Secuencias</h2>
+                    </div>
+                    <button id="music-reset-btn" class="action-btn reset-btn small-btn" type="button" title="Reiniciar música">↻</button>
+                </div>
+
+                <div class="summary-window">
+                    <div class="summary-card">
+                        <strong id="score-count">0</strong>
+                        <span>Puntos</span>
+                    </div>
+                    <div class="summary-card">
+                        <strong id="streak-count">0</strong>
+                        <span>Racha</span>
+                    </div>
+                    <div class="summary-card">
+                        <div id="lives-count" class="life-icons" aria-label="Vidas"></div>
+                        <span>Vidas</span>
+                    </div>
+                    <div class="summary-card small-line">
+                        <strong id="timer-count">5:00</strong>
+                        <span>Tiempo</span>
+                    </div>
+                    <div class="summary-card">
+                        <strong id="next-intermission-count">7</strong>
+                        <span>Ejercicios</span>
+                    </div>
+                </div>
+
+                <div class="exercise-stage" id="exercise-stage">
+                    <p class="empty-exercise">Selecciona un modo para iniciar Recta Numérica.</p>
+                </div>
+
+                <div id="response-panel" class="response-panel"></div>
+            </section>
+
+            <section class="status-panel void-panel side-panel">
+                <div class="status-tagbar">
+                    <span id="effect-tag" class="effect-tag">Sin maldición activa</span>
+                </div>
+
+                <div class="exercise-actions vertical-actions">
+                    <button id="restart-btn" class="action-btn continue-btn" type="button" disabled>Reiniciar</button>
+                    <button id="exit-game-btn" class="action-btn back-btn" type="button" disabled>Salir</button>
+                </div>
+
+                <p id="feedback-line" class="feedback-line">Tu avatar intentara ayudarte cuando haga falta.</p>
+            </section>
+        </section>
+
+        <div id="learning-modal" class="learning-modal hidden">
+                <div class="learning-modal-content">
+                    <div id="tutorial-content"></div>
+                    <div class="tutorial-interaction" id="tutorial-interaction"></div>
+                    <div class="tutorial-actions">
+                        <button id="tutorial-back-btn" class="action-btn" type="button">Atrás</button>
+                        <button id="close-learning-modal" class="action-btn continue-btn" type="button">Siguiente</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="difficulty-modal" class="learning-modal hidden">
+                <div class="learning-modal-content">
+                    <h2>Elegir dificultad</h2>
+                    <p>Selecciona tu experiencia preferida:</p>
+                    <div class="composition-example" style="display:grid;gap:.75rem;color:#fff;">
+                        <button class="action-btn continue-btn difficulty-btn" data-difficulty="casual" type="button"><strong>Casual</strong><br><small>Vidas cada ejercicio</small></button>
+                        <button class="action-btn continue-btn difficulty-btn" data-difficulty="normal" type="button"><strong>Normal</strong><br><small>Vidas cada 3 ejercicios</small></button>
+                        <button class="action-btn continue-btn difficulty-btn" data-difficulty="extremo" type="button"><strong>Extremo</strong><br><small>Vidas por intermisión</small></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intermisión inline panel: reemplaza el área de ejercicios durante la intermisión -->
+            <div id="intermission-panel" class="intermission-panel hidden">
+                <div class="intermission-content">
+                    <h2 id="intermission-title">Intermisión</h2>
+                    <p id="intermission-text">Has completado un conjunto de ejercicios. Elige una maldición para el siguiente bloque.</p>
+                    <div id="intermission-status" class="composition-example" style="margin-bottom:1rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem;color:#fff;">
+                        <span><strong>Puntos:</strong> <span id="intermission-points">0</span></span>
+                        <span><strong>Racha:</strong> <span id="intermission-streak">0</span></span>
+                        <span><strong>Hasta intermisión:</strong> <span id="intermission-until">7</span></span>
+                    </div>
+                    <div id="intermission-options" class="intermission-options" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;align-items:start;margin-bottom:1rem;">
+                        <!-- Cada maldición con imagen y descripción (poblamiento dinámico desde JS) -->
+                    </div>
+                    <div style="display:flex;gap:.75rem;align-items:center;margin-bottom:1rem;">
+                        <label style="display:flex;align-items:center;gap:.5rem;color:#fff;">
+                            <input id="enemy-toggle" type="checkbox" style="transform:scale(1.1);"> Añadir enemigos al set
+                        </label>
+                        <div style="flex:1"></div>
+                        <button id="intermission-reroll" class="action-btn continue-btn" type="button">Rerrollear</button>
+                        <button id="intermission-continue" class="action-btn continue-btn" type="button">Continuar</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    <script src="js/enemies.js"></script>
+    <script src="js/recta-game.js"></script>
+</body>
+</html>
+

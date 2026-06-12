@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nullscape - Index</title>
+    <link rel="stylesheet" href="css/nullscape.css">
+</head>
+<body class="index-body">
+    <section id="splash-screen" class="splash-screen hidden" aria-label="Pantalla de inicio">
+        <div class="splash-panel void-panel">
+            <header class="splash-header">
+                <h1>NULLSCAPE</h1>
+                <p>MATEMATICAS 4TO</p>
+                <p class="subtitle-sm">Primero elige tu avatar.</p>
+            </header>
+            <button id="splash-cta" class="splash-cta" type="button">Elegir avatar</button>
+        </div>
+    </section>
+
+    <main id="hub-screen" class="index-page hidden" aria-label="Index Nullscape">
+        <header class="nullscape-topmark" aria-hidden="true">
+            <img class="tripmine-orbit" src="img (4to)/Tripmine.png" alt="">
+        </header>
+
+        <section class="index-shell">
+            <aside class="profile-panel void-panel">
+                <div class="profile-avatar-wrap">
+                    <img id="profile-avatar" src="" alt="Avatar seleccionado">
+                </div>
+                <div class="profile-copy">
+                    <span>Avatar</span>
+                    <h1 id="profile-name">Visitante</h1>
+                    <div class="avatar-nameplate">
+                        <strong id="profile-ally">Pocket Bell</strong>
+                        <em id="profile-quote">"An extra double jump."</em>
+                    </div>
+                </div>
+
+                <div class="profile-stats">
+                    <div>
+                        <span>Progreso</span>
+                        <strong id="profile-progress">0%</strong>
+                    </div>
+                    <div>
+                        <span>Nivel</span>
+                        <strong>1</strong>
+                    </div>
+                    <div>
+                        <span>Racha</span>
+                        <strong>0</strong>
+                    </div>
+                    <div>
+                        <span>Estado</span>
+                        <strong>Activo</strong>
+                    </div>
+                </div>
+
+                <div class="progress-track" aria-label="Progreso general">
+                    <span id="progress-fill"></span>
+                </div>
+
+                <button id="change-avatar-btn" class="action-btn back-btn" type="button">Cambiar avatar</button>
+            </aside>
+
+            <section class="index-board">
+                <div class="index-heading">
+                    <div>
+                        <p>Modulos de matematicas</p>
+                        <h2>Selecciona una zona</h2>
+                    </div>
+                    <div class="index-actions-group">
+                        <a href="todos.html" class="action-btn continue-btn" type="button">Ir a todos</a>
+                        <a href="Jimbo/index.html" class="action-btn continue-btn" type="button">Ir a Jimbo</a>
+                        <button id="exit-btn" class="action-btn exit-btn" type="button">Salir</button>
+                    </div>
+                </div>
+
+                <div id="module-grid" class="module-grid" aria-label="Modulos de matematicas"></div>
+            </section>
+        </section>
+    </main>
+
+    <script src="js/enemies.js"></script>
+    <script src="js/enemy-effects.js"></script>
+    <script>
+        const menuEffects = createEnemyEffects({});
+        menuEffects.bindMusicUnlock();
+
+        const splashScreen = document.getElementById('splash-screen');
+        const hubScreen = document.getElementById('hub-screen');
+        const splashCta = document.getElementById('splash-cta');
+        const profileAvatar = document.getElementById('profile-avatar');
+        const profileName = document.getElementById('profile-name');
+        const profileAlly = document.getElementById('profile-ally');
+        const profileQuote = document.getElementById('profile-quote');
+        const profileProgress = document.getElementById('profile-progress');
+        const progressFill = document.getElementById('progress-fill');
+        const moduleGrid = document.getElementById('module-grid');
+        const changeAvatarBtn = document.getElementById('change-avatar-btn');
+        const exitBtn = document.getElementById('exit-btn');
+
+        const modules = [
+            { title: 'Comparación', detail: 'Compara números con >, < y = — modos progresivos', href: 'ComparisonGame.html', storageKey: 'comparisonGameScore', threshold: 25 },
+            { title: 'Recta Numérica', detail: 'Completa secuencias y patrones — dificultad dinámica', href: 'RectaGame.html', storageKey: 'rectaGameScore', threshold: 15 },
+            { title: 'Conversión', detail: 'Números ↔ palabras — ejercicios adaptativos', href: 'ConversionGame.html', storageKey: 'conversionGameScore', threshold: 25 },
+            { title: 'Verificación', detail: 'Verifica escritura vs numeral — opciones avanzadas', href: 'VerificationGame.html', storageKey: 'verificationGameScore', threshold: 25 },
+            { title: 'Mixto', detail: 'Módulo mixto (no tocado por ahora)', href: 'MixedGame.html' },
+            { title: 'Próximamente', detail: 'Más juegos y desafíos...', progress: 0 }
+        ];
+
+        function hasSession() {
+            return Boolean(sessionStorage.getItem('grade4Identity') && sessionStorage.getItem('grade4Enemy'));
+        }
+
+        function showSplash() {
+            splashScreen.classList.remove('hidden');
+            hubScreen.classList.add('hidden');
+        }
+
+        function showIndex() {
+            splashScreen.classList.add('hidden');
+            hubScreen.classList.remove('hidden');
+            renderIndex();
+        }
+
+        function getStoredScore(key) {
+            if (!key) return 0;
+            return Number(localStorage.getItem(key) || 0);
+        }
+
+        function renderModules() {
+            moduleGrid.innerHTML = modules.map((item, index) => {
+                const score = getStoredScore(item.storageKey);
+                const unlocked = item.threshold ? score >= item.threshold : false;
+                const percent = item.threshold ? Math.min(100, Math.round((score / item.threshold) * 100)) : 0;
+                const statusText = item.storageKey
+                    ? `Infinito: ${score}${unlocked ? ' • Desbloqueado' : ''}`
+                    : item.title === 'Mixto'
+                        ? 'Modo mixto'
+                        : 'Próximamente';
+                const progressText = item.threshold
+                    ? `${unlocked ? 100 : percent}%`
+                    : '-';
+
+                return `
+                    <article class="module-card void-panel" data-href="${item.href || ''}">
+                        <div class="module-number">${String(index + 1).padStart(2, '0')}</div>
+                        <h3>${item.title}</h3>
+                        <p>${item.detail}</p>
+                        <div class="module-status">
+                            <span>${statusText}</span>
+                            <strong>${progressText}</strong>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            moduleGrid.querySelectorAll('.module-card[data-href]').forEach((card) => {
+                if (!card.dataset.href) return;
+                card.addEventListener('click', () => {
+                    window.location.href = card.dataset.href;
+                });
+            });
+        }
+
+        function renderIndex() {
+            const identity = sessionStorage.getItem('grade4Identity');
+            const enemyKey = sessionStorage.getItem('grade4Enemy');
+            const enemy = enemies[enemyKey];
+
+            if (!identity || !enemy) {
+                showSplash();
+                return;
+            }
+
+            document.title = `${identity} - Nullscape`;
+            profileName.textContent = identity;
+            profileAlly.textContent = enemy.label;
+            profileQuote.textContent = `"${enemy.description || 'Tu unico aliado en el vacio.'}"`;
+            profileAvatar.src = enemy.icon;
+            profileAvatar.alt = enemy.label;
+            profileProgress.textContent = '0%';
+            progressFill.style.width = '0%';
+            renderModules();
+        }
+
+        splashCta.addEventListener('click', () => {
+            window.location.href = 'Login4to.html';
+        });
+
+        changeAvatarBtn.addEventListener('click', () => {
+            window.location.href = 'Login4to.html';
+        });
+
+        exitBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('grade4Identity');
+            sessionStorage.removeItem('grade4Enemy');
+            showSplash();
+        });
+
+        if (hasSession()) {
+            showIndex();
+        } else {
+            showSplash();
+        }
+    </script>
+</body>
+</html>
+

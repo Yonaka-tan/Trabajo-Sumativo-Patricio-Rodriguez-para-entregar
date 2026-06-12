@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mixto - Nullscape</title>
+    <link rel="stylesheet" href="css/nullscape.css">
+</head>
+<body class="index-body mixed-body">
+    <main class="game-page mixed-page">
+        <aside class="avatar-presence" id="avatar-presence" aria-hidden="true"></aside>
+        <div class="enemy-stage left" id="enemy-left" aria-hidden="true"></div>
+        <div class="enemy-stage right" id="enemy-right" aria-hidden="true"></div>
+
+        <header class="game-header">
+            <a class="back-link-page" href="index.html">Regresar</a>
+            <div>
+                <p>Juego infinito</p>
+                <h1>Mixto</h1>
+            </div>
+            <a class="action-btn back-btn" href="NumeracionTutorial.html">Guia / tutorial</a>
+        </header>
+
+        <section class="game-shell">
+            <section class="mode-panel void-panel">
+                <div class="player-strip">
+                    <img id="selected-avatar-icon" src="" alt="">
+                    <div>
+                        <span id="selected-avatar-label">Avatar</span>
+                        <strong id="selected-player-name">Visitante</strong>
+                    </div>
+                </div>
+
+                <div class="mode-grid">
+                    <button class="mode-card void-panel active" type="button" data-mode="juego">
+                        <strong>Modo Infinito</strong>
+                        <span>Desafio sin limites. Cuanto mas duro, mejor.</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="exercise-panel void-panel">
+                <div class="exercise-topline">
+                    <div>
+                        <span id="mode-label">Modo Infinito</span>
+                        <h2 id="game-title">Desafio Mixto</h2>
+                        <div class="difficulty-panel">
+                            <span id="difficulty-badge" class="status-badge">CASUAL</span>
+                            <span id="status-banner" class="status-banner">Elige tu dificultad antes de comenzar.</span>
+                        </div>
+                    </div>
+                    <div class="run-stats">
+                        <div class="stat-box shields-box">
+                            <div id="shields-container" class="shields-container">
+                                <img class="shield-icon" src="img (4to)/Shield.png" alt="vida">
+                                <img class="shield-icon" src="img (4to)/Shield.png" alt="vida">
+                                <img class="shield-icon" src="img (4to)/Shield.png" alt="vida">
+                            </div>
+                        </div>
+                        <div class="stat-box timer-box">
+                            <img class="timer-icon" src="img (4to)/Cadence icono.png" alt="tiempo">
+                            <strong id="timer-count">10:00</strong>
+                        </div>
+                        <span class="stat-box">Puntos <strong id="score-count">0</strong></span>
+                        <span class="stat-box">Hasta intermisión <strong id="exercise-until-count">7</strong></span>
+                    </div>
+                </div>
+
+                <div class="glossary-box compact">
+                    <span><b>Comparar:</b> &gt;, &lt;, =</span>
+                    <span><b>Secuencias:</b> Encuentra los faltantes</span>
+                    <span><b>Conversion:</b> Numeros ↔ palabras</span>
+                    <span><b>Verificacion:</b> ¿Es correcto?</span>
+                </div>
+
+                <div class="exercise-stage" id="exercise-stage">
+                    <p class="empty-exercise">Iniciando desafio mixto...</p>
+                </div>
+
+                <div id="response-panel" class="response-panel"></div>
+
+                <div class="exercise-actions">
+                    <button id="restart-btn" class="action-btn continue-btn" type="button" disabled>Reiniciar</button>
+                    <button id="exit-game-btn" class="action-btn back-btn" type="button" disabled>Salir del juego</button>
+                </div>
+
+                <p id="feedback-line" class="feedback-line">Tu avatar te guidara en el vacio infinito.</p>
+            </section>
+
+            <div id="learning-modal" class="learning-modal hidden">
+                <div class="learning-modal-content">
+                    <h2>Desafío Infinito Mixto</h2>
+                    <p>Aquí se mezclan todos los tipos de ejercicios. ¡Debes estar atento!</p>
+                    <div class="composition-example">
+                        <div class="composition-unit" style="color: #ff5252;">
+                            <strong>Aleatorio</strong>
+                            <p>Cada ejercicio es sorpresa</p>
+                        </div>
+                        <div class="composition-unit" style="color: #4caf50;">
+                            <strong>Progresivo</strong>
+                            <p>La dificultad aumenta constantemente</p>
+                        </div>
+                        <div class="composition-unit" style="color: #ffeb3b;">
+                            <strong>Infinito</strong>
+                            <p>¡Sin fin! Prueba cuan lejos llegas</p>
+                        </div>
+                    <div id="active-enemies" class="active-enemies" aria-live="polite"></div>
+                    </div>
+                    <button id="close-learning-modal" class="action-btn continue-btn" type="button">Listo, comencemos</button>
+                </div>
+            </div>
+            <div id="difficulty-modal" class="learning-modal hidden">
+                <div class="learning-modal-content">
+                    <h2>Elegir dificultad</h2>
+                    <p>Selecciona tu experiencia preferida:</p>
+                    <div class="composition-example" style="display:grid;gap:.75rem;color:#fff;">
+                        <button class="action-btn continue-btn difficulty-btn" data-difficulty="casual" type="button"><strong>Casual</strong><br><small>Vidas cada ejercicio</small></button>
+                        <button class="action-btn continue-btn difficulty-btn" data-difficulty="normal" type="button"><strong>Normal</strong><br><small>Vidas cada 3 ejercicios</small></button>
+                        <button class="action-btn continue-btn difficulty-btn" data-difficulty="extremo" type="button"><strong>Extremo</strong><br><small>Vidas por intermisión</small></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Intermisión inline panel: reemplaza el área de ejercicios durante la intermisión -->
+            <div id="intermission-panel" class="intermission-panel hidden">
+                <div class="intermission-content">
+                    <h2 id="intermission-title">Intermisión</h2>
+                    <p id="intermission-text">Has completado un conjunto de ejercicios. Elige una maldición para el siguiente bloque.</p>
+                    <div id="intermission-status" class="composition-example" style="margin-bottom:1rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem;color:#fff;">
+                        <span><strong>Puntos:</strong> <span id="intermission-points">0</span></span>
+                        <span><strong>Racha:</strong> <span id="intermission-streak">0</span></span>
+                        <span><strong>Hasta intermisión:</strong> <span id="intermission-until">7</span></span>
+                    </div>
+                    <div id="intermission-options" class="intermission-options">
+                        <!-- Cada maldición con imagen y descripción (poblamiento dinámico desde JS) -->
+                    </div>
+                    <div style="display:flex;gap:.75rem;align-items:center;margin-bottom:1rem;">
+                        <label style="display:flex;align-items:center;gap:.5rem;color:#fff;">
+                            <input id="enemy-toggle" type="checkbox" style="transform:scale(1.1);"> Añadir enemigos al set
+                        </label>
+                        <div style="flex:1"></div>
+                        <button id="intermission-reroll" class="action-btn continue-btn" type="button">Rerrollear</button>
+                        <button id="intermission-continue" class="action-btn continue-btn" type="button">Continuar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/enemies.js"></script>
+    <script src="js/enemy-effects.js"></script>
+    <script src="js/mixed-game.js"></script>
+</body>
+</html>
+

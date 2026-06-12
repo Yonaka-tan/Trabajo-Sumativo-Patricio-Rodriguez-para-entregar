@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversión - Nullscape</title>
+    <link rel="stylesheet" href="css/nullscape.css">
+</head>
+<body class="index-body conversion-body">
+    <main class="game-page conversion-page">
+        <aside class="avatar-presence" id="avatar-presence" aria-hidden="true"></aside>
+
+        <header class="game-header">
+            <a class="back-link-page" href="index.html">Regresar</a>
+            <div>
+                <p>Juego linguistico</p>
+                <h1>Conversion</h1>
+            </div>
+            <a class="action-btn back-btn" href="NumeracionTutorial.html">Guia / tutorial</a>
+        </header>
+
+        <section class="game-shell">
+            <section class="mode-panel void-panel">
+                <div class="player-strip">
+                    <img id="selected-avatar-icon" src="" alt="">
+                    <div>
+                        <span id="selected-avatar-label">Avatar</span>
+                        <strong id="selected-player-name">Visitante</strong>
+                    </div>
+                </div>
+
+                <div class="mode-grid">
+                    <button class="mode-card void-panel" type="button" data-mode="aprendizaje">
+                        <strong>Aprendizaje</strong>
+                        <span>Practica con ayuda, sin perder avance.</span>
+                    </button>
+                    <button class="mode-card void-panel" type="button" data-mode="prueba">
+                        <strong>Prueba</strong>
+                        <span>Consigue 25 puntos para abrir Juego.</span>
+                    </button>
+                    <button class="mode-card void-panel locked" id="game-mode-btn" type="button" data-mode="juego">
+                        <strong>Juego</strong>
+                        <span id="game-lock-text">Bloqueado: necesitas 25 puntos en prueba.</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="exercise-panel void-panel">
+                <div class="exercise-topline">
+                    <div>
+                        <span id="mode-label">Elige un modo</span>
+                        <h2 id="game-title">Numeros y Palabras</h2>
+                        <div class="difficulty-panel">
+                            <span id="difficulty-badge" class="status-badge">CASUAL</span>
+                            <span id="status-banner" class="status-banner">Convierte entre números y palabras con ritmo fijo.</span>
+                        </div>
+                    </div>
+                    <div class="run-stats">
+                        <div class="stat-box shields-box">
+                            <div id="shields-container" class="shields-container">
+                                <img class="shield-icon" src="img (4to)/Shield.png" alt="vida">
+                                <img class="shield-icon" src="img (4to)/Shield.png" alt="vida">
+                                <img class="shield-icon" src="img (4to)/Shield.png" alt="vida">
+                            </div>
+                        </div>
+                        <div class="stat-box timer-box">
+                            <img class="timer-icon" src="img (4to)/Cadence icono.png" alt="tiempo">
+                            <strong id="timer-count">5:00</strong>
+                        </div>
+                        <span class="stat-box">Puntos <strong id="score-count">0</strong></span>
+                    </div>
+                </div>
+
+                <div class="glossary-box compact">
+                    <span><b>Numerales:</b> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...</span>
+                    <span><b>Palabras:</b> uno, dos, tres, cuatro, cinco...</span>
+                    <span><b>Conversion:</b> Transformar entre formas</span>
+                </div>
+
+                <div class="exercise-stage" id="exercise-stage">
+                    <p class="empty-exercise">Selecciona un modo para iniciar Conversion.</p>
+                </div>
+
+                <div id="response-panel" class="response-panel"></div>
+
+                <div class="exercise-actions">
+                    <button id="restart-btn" class="action-btn continue-btn" type="button" disabled>Reiniciar</button>
+                    <button id="exit-game-btn" class="action-btn back-btn" type="button" disabled>Salir del juego</button>
+                </div>
+
+                <p id="feedback-line" class="feedback-line">Tu avatar intentara ayudarte cuando haga falta.</p>
+            </section>
+
+            <div id="learning-modal" class="learning-modal hidden">
+                <div class="learning-modal-content">
+                    <h2>Números a Palabras y Viceversa</h2>
+                    <p>Aprender a leer y escribir números es fundamental en matemáticas.</p>
+                    <div class="composition-example">
+                        <div class="composition-unit" style="color: #4da6ff;">
+                            <strong>De Cifras a Palabras</strong>
+                            <p>123 → ciento veintitrés</p>
+                        </div>
+                        <div class="composition-unit" style="color: #ffeb3b;">
+                            <strong>De Palabras a Cifras</strong>
+                            <p>mil ochocientos → 1800</p>
+                        </div>
+                        <div class="composition-unit" style="color: #ff5252;">
+                            <strong>Escritura Correcta</strong>
+                            <p>Respeta tildes y espacios</p>
+                        </div>
+                    </div>
+                    <div class="composition-demo">
+                        <h3>Ejemplos</h3>
+                        <p><span style="color: #4da6ff;">5432 → cinco mil cuatrocientos treinta y dos</span></p>
+                        <p><span style="color: #ffeb3b;">dos mil uno → 2001</span></p>
+                    </div>
+                    <button id="close-learning-modal" class="action-btn continue-btn" type="button">Entendido, comenzar</button>
+                </div>
+            </div>
+            <div id="difficulty-modal" class="learning-modal hidden">
+                <div class="learning-modal-content">
+                    <h2>Elegir dificultad</h2>
+                    <p>Selecciona tu experiencia preferida:</p>
+                    <div class="composition-example" style="display:grid;gap:.75rem;color:#fff;">
+                        <button class="action-btn continue-btn difficulty-btn" data-difficulty="casual" type="button"><strong>Casual</strong><br><small>Vidas cada ejercicio</small></button>
+                        <button class="action-btn continue-btn difficulty-btn" data-difficulty="normal" type="button"><strong>Normal</strong><br><small>Vidas cada 3 ejercicios</small></button>
+                        <button class="action-btn continue-btn difficulty-btn" data-difficulty="extremo" type="button"><strong>Extremo</strong><br><small>Vidas por intermisión</small></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/enemies.js"></script>
+    <script src="js/conversion-game.js"></script>
+</body>
+</html>
+

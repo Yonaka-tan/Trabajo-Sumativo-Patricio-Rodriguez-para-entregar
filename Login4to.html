@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVATAR</title>
+    <link rel="stylesheet" href="css/nullscape.css">
+    <style>
+        body.demo-running {
+            cursor: none;
+        }
+
+        body.demo-running .login-screen {
+            place-items: start center;
+            padding-top: 12px;
+        }
+
+        body.demo-running .login-panel {
+            transform: scale(0.78);
+            transform-origin: top center;
+        }
+
+        body.demo-running .avatar,
+        body.demo-running #name-input,
+        body.demo-running #verify-btn,
+        body.demo-running #baby-demo-btn,
+        body.demo-running .back-link {
+            pointer-events: none;
+            opacity: 0.54;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+            gap: 10px;
+        }
+
+        .avatar {
+            min-height: 104px;
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            background: rgba(255, 255, 255, 0.055);
+            color: var(--text);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            gap: 6px;
+            padding: 10px 8px;
+            transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+        }
+
+        .avatar:hover,
+        .avatar:focus-visible {
+            outline: none;
+            transform: translateY(-2px);
+            border-color: rgba(255, 31, 55, 0.72);
+            background: rgba(255, 31, 55, 0.12);
+        }
+
+        .avatar.active {
+            border-color: var(--red);
+            background: rgba(255, 31, 55, 0.2);
+            box-shadow: inset 0 0 18px rgba(255, 31, 55, 0.18), 0 0 20px rgba(255, 31, 55, 0.18);
+        }
+
+        .avatar img {
+            width: 54px;
+            height: 54px;
+            object-fit: contain;
+        }
+
+        .avatar span {
+            font-size: 0.82rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .avatar.nil-slot {
+            border-color: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+        .avatar.nil-slot img,
+        .avatar.nil-slot span {
+            opacity: 0;
+        }
+
+        .avatar.nil-slot.active img,
+        .avatar.nil-slot.active span,
+        .avatar.nil-slot.revealed img,
+        .avatar.nil-slot.revealed span {
+            opacity: 1;
+        }
+
+        .avatar.nil-slot.active {
+            border-color: rgba(255, 31, 55, 0.75);
+            background: rgba(0, 0, 0, 0.38);
+        }
+
+        .identity-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+        }
+
+        #name-input,
+        #verify-btn {
+            min-height: 52px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font: inherit;
+        }
+
+        #name-input {
+            width: 100%;
+            padding: 0 16px;
+            background: rgba(0, 0, 0, 0.34);
+            color: var(--text);
+            outline: none;
+        }
+
+        #name-input::placeholder {
+            color: #988e92;
+        }
+
+        #name-input:focus {
+            border-color: rgba(255, 31, 55, 0.82);
+            box-shadow: 0 0 0 3px rgba(255, 31, 55, 0.13);
+        }
+
+        #verify-btn {
+            padding: 0 22px;
+            color: #fff;
+            font-weight: 900;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #ff3147, #980012);
+            cursor: pointer;
+            box-shadow: 0 0 18px rgba(255, 31, 55, 0.28);
+        }
+
+        #verify-btn:disabled {
+            cursor: not-allowed;
+            color: #746c70;
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: none;
+        }
+
+        .selection-line {
+            min-height: 24px;
+            margin: -4px 0 0;
+            color: var(--muted);
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .enemy-tools {
+            min-height: 42px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .demo-button {
+            display: none;
+            min-height: 38px;
+            padding: 0 16px;
+            border: 1px solid rgba(255, 31, 55, 0.5);
+            background:
+                linear-gradient(180deg, rgba(126, 54, 214, 0.45), rgba(65, 16, 95, 0.72)),
+                rgba(0, 0, 0, 0.35);
+            color: #ffe8ec;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: inset 0 0 18px rgba(255, 31, 55, 0.12), 0 0 16px rgba(118, 48, 210, 0.28);
+        }
+
+        .demo-button.visible {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+
+        .verified-message {
+            min-height: 22px;
+            color: #ffb6bf;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .back-link {
+            justify-self: center;
+            border: 0;
+            background: transparent;
+            color: #a9a0a4;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
+        .demo-arena {
+            position: fixed;
+            left: 18px;
+            right: 18px;
+            bottom: 18px;
+            top: min(31vh, 230px);
+            z-index: 5;
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            pointer-events: none;
+        }
+
+        .demo-arena.active {
+            display: grid;
+        }
+
+        .demo-lane {
+            position: relative;
+            overflow: hidden;
+            min-height: 300px;
+            border: 1px solid rgba(255, 31, 55, 0.32);
+            background:
+                linear-gradient(180deg, rgba(255, 31, 55, 0.06), rgba(0, 0, 0, 0.35)),
+                rgba(3, 4, 8, 0.74);
+            box-shadow: inset 0 0 38px rgba(121, 52, 255, 0.16), 0 0 26px rgba(255, 31, 55, 0.13);
+        }
+
+        .demo-lane::before {
+            content: attr(data-label);
+            position: absolute;
+            top: 12px;
+            left: 14px;
+            z-index: 2;
+            color: #ffd7dc;
+            font-size: 0.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(255, 31, 55, 0.72);
+        }
+
+        .demo-line {
+            position: absolute;
+            left: 16%;
+            width: 78%;
+            top: 50%;
+            height: 3px;
+            background: #ff1f37;
+            box-shadow: 0 0 10px #ff1f37, 0 0 28px rgba(255, 31, 55, 0.62);
+            animation: warningPulse 0.2s steps(2, end) infinite;
+            transform: translateY(-50%) rotate(-2deg);
+            transform-origin: left center;
+        }
+
+        .demo-baby,
+        .demo-cursor {
+            position: absolute;
+            z-index: 3;
+            object-fit: contain;
+            filter: drop-shadow(0 0 16px rgba(255, 31, 55, 0.62));
+        }
+
+        .demo-baby {
+            width: clamp(76px, 10vw, 128px);
+            left: 10%;
+            top: calc(50% - 62px);
+        }
+
+        .demo-cursor {
+            width: clamp(48px, 6vw, 76px);
+            left: 58%;
+            top: calc(50% - 38px);
+            filter: drop-shadow(0 0 15px rgba(121, 52, 255, 0.86));
+        }
+
+        .demo-cursor.safe {
+            animation: dodgeCursor 7.2s ease-in-out forwards;
+        }
+
+        .demo-cursor.hit {
+            animation: hitCursor 7.2s ease-in-out forwards;
+        }
+
+        .demo-baby.seeking {
+            animation: babySeekPath 1.9s ease-in-out forwards;
+        }
+
+        .demo-baby.locked {
+            left: 18%;
+        }
+
+        .demo-baby.run {
+            animation: babyChargePath 3.15s cubic-bezier(0.18, 0.82, 0.32, 1) forwards;
+        }
+
+        .demo-baby.stunned {
+            left: 88%;
+            animation: babyStunned 1.45s ease-in-out infinite;
+        }
+
+        .demo-hit-flash {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 31, 55, 0);
+            z-index: 4;
+            animation: impactFlash 6.3s ease-out forwards;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.22; }
+        }
+
+        @keyframes dodgeCursor {
+            0%, 42% { transform: translate(0, 0); }
+            58%, 100% { transform: translate(-18px, -118px); }
+        }
+
+        @keyframes hitCursor {
+            0%, 100% { transform: translate(0, 0); }
+        }
+
+        @keyframes babySeekPath {
+            0% { left: 10%; transform: translateY(0) rotate(0deg); }
+            45% { left: 14%; transform: translateY(6px) rotate(1deg); }
+            100% { left: 18%; transform: translateY(0) rotate(0deg); }
+        }
+
+        @keyframes babyChargePath {
+            0% { left: 18%; transform: translateY(0) rotate(0deg); }
+            58% { left: 58%; transform: translateY(-8px) rotate(-2deg); }
+            100% { left: 88%; transform: translateY(-14px) rotate(5deg); }
+        }
+
+        @keyframes babyStunned {
+            0%, 100% { transform: translate(-50%, -14px) rotate(-7deg); filter: drop-shadow(0 0 16px rgba(255, 31, 55, 0.38)); }
+            50% { transform: translate(-50%, -6px) rotate(7deg); filter: drop-shadow(0 0 8px rgba(255, 31, 55, 0.18)); }
+        }
+
+        @keyframes impactFlash {
+            0%, 47% { background: rgba(255, 31, 55, 0); }
+            55% { background: rgba(255, 31, 55, 0.4); }
+            100% { background: rgba(255, 31, 55, 0); }
+        }
+
+        @media (max-width: 980px) {
+            body.demo-running .login-panel {
+                transform: scale(0.9);
+            }
+
+            .enemy-stage {
+                display: none;
+                position: relative;
+                top: auto;
+                left: auto;
+                right: auto;
+                transform: none;
+                width: min(230px, 76vw);
+                height: 190px;
+                margin: 0 auto -12px;
+                order: -1;
+            }
+
+            .enemy-stage.visible {
+                display: grid;
+            }
+
+            .login-screen {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .demo-arena {
+                top: 215px;
+                grid-template-columns: 1fr;
+                overflow: hidden;
+            }
+
+            .demo-lane {
+                min-height: 190px;
+            }
+
+            .demo-baby {
+                top: calc(50% - 46px);
+                width: 84px;
+            }
+
+            .demo-cursor {
+                width: 54px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .identity-row {
+                grid-template-columns: 1fr;
+            }
+
+            .avatar-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .avatar {
+                min-height: 96px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="login-screen">
+        <header class="nullscape-topmark login-topmark" aria-hidden="true">
+            <img class="tripmine-orbit" src="img (4to)/Tripmine.png" alt="">
+        </header>
+        <div class="enemy-stage left" id="enemy-left" aria-hidden="true"></div>
+        <section class="login-panel" aria-labelledby="login-title">
+            <header class="login-header">
+                <h1 id="login-title" class="pocket-title">AVATAR</h1>
+                <p>Elige a tu <span class="red-word">UNICO</span> <span class="green-word">ALIADO</span></p>
+            </header>
+
+            <div class="avatar-grid" aria-label="Avatares seleccionables">
+                <button type="button" class="avatar" data-enemy="baby">
+                    <img src="img (4to)/Baby icono.png" alt="Baby">
+                    <span>Baby</span>
+                </button>
+                <button type="button" class="avatar" data-enemy="telefragger">
+                    <img src="img (4to)/Telefragger icono.png" alt="Telefragger">
+                    <span>Telefragger</span>
+                </button>
+                <button type="button" class="avatar" data-enemy="husk">
+                    <img src="img (4to)/Husk.png" alt="Husk">
+                    <span>Husk</span>
+                </button>
+                <button type="button" class="avatar" data-enemy="guardian">
+                    <img src="img (4to)/Guardianicono.png" alt="Guardian">
+                    <span>Guardian</span>
+                </button>
+                <button type="button" class="avatar" data-enemy="icbm">
+                    <img src="img (4to)/ICBM.png" alt="ICBM">
+                    <span>ICBM</span>
+                </button>
+                <button type="button" class="avatar" data-enemy="mart">
+                    <img src="img (4to)/Marticono.png" alt="Mart">
+                    <span>Mart</span>
+                </button>
+                <button type="button" class="avatar" data-enemy="bell">
+                    <img src="img (4to)/Bell👀.png" alt="Bell">
+                    <span>Bell</span>
+                </button>
+                <button type="button" class="avatar" data-enemy="cadence">
+                    <img src="img (4to)/Cadence icono.png" alt="Cadence">
+                    <span>Cadence</span>
+                </button>
+                <button type="button" class="avatar" data-enemy="operator">
+                    <img src="img (4to)/Operator.png" alt="Operator">
+                    <span>Operator</span>
+                </button>
+                <button type="button" class="avatar nil-slot" data-enemy="nil" aria-label="Nil">
+                    <img src="img (4to)/NIL.png" alt="Nil">
+                    <span>Nil</span>
+                </button>
+            </div>
+
+            <div class="selection-line" id="selection-line">Ningun adversario seleccionado.</div>
+            <div class="enemy-tools">
+                <button id="baby-demo-btn" class="demo-button" type="button">Mostrar demo</button>
+            </div>
+
+            <div class="identity-row">
+                <input id="name-input" type="text" placeholder="Elige tu identidad." autocomplete="off">
+                <button id="verify-btn" type="button" disabled>Verificar</button>
+            </div>
+
+            <div class="verified-message" id="verified-message" aria-live="polite"></div>
+            <button class="back-link" id="back-to-index" type="button">Volver</button>
+        </section>
+        <div class="enemy-stage right" id="enemy-right" aria-hidden="true"></div>
+        <div class="demo-arena" id="baby-demo" aria-hidden="true">
+            <div class="demo-lane" data-label="Como esquivarlo">
+                <div class="demo-line"></div>
+                <img class="demo-baby" src="img (4to)/Baby animation.gif" alt="">
+                <img class="demo-cursor safe" src="img (4to)/void cursor.png" alt="">
+            </div>
+            <div class="demo-lane" data-label="Como te mata">
+                <div class="demo-line"></div>
+                <img class="demo-baby" src="img (4to)/Baby animation.gif" alt="">
+                <img class="demo-cursor hit" src="img (4to)/Void select.png" alt="">
+                <div class="demo-hit-flash"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/enemies.js"></script>
+    <script src="js/enemy-effects.js"></script>
+    <script>
+        const soundPaths = {
+            babyAlarm: 'sonidos (4to)/Baby_Alarm.ogg',
+            babyCharge: 'sonidos (4to)/Baby_Scream.ogg'
+        };
+
+        const avatarButtons = document.querySelectorAll('.avatar');
+        const nameInput = document.getElementById('name-input');
+        const verifyBtn = document.getElementById('verify-btn');
+        const selectionLine = document.getElementById('selection-line');
+        const verifiedMessage = document.getElementById('verified-message');
+        const enemyLeft = document.getElementById('enemy-left');
+        const enemyRight = document.getElementById('enemy-right');
+        const backBtn = document.getElementById('back-to-index');
+        const babyDemoBtn = document.getElementById('baby-demo-btn');
+        const babyDemo = document.getElementById('baby-demo');
+        const babyDemoImages = babyDemo.querySelectorAll('.demo-baby');
+        const babyAudio = {
+            alarm: new Audio(soundPaths.babyAlarm),
+            charge: new Audio(soundPaths.babyCharge)
+        };
+        let selectedEnemy = null;
+        let demoRunning = false;
+        let demoTimeouts = [];
+        const enemyEffects = createEnemyEffects({
+            root: document.querySelector('.login-screen'),
+            stageLeft: enemyLeft,
+            stageRight: enemyRight,
+            toolsHost: document.querySelector('.enemy-tools'),
+            getEnemy: (key) => enemies[key]
+        });
+
+        const savedIdentity = sessionStorage.getItem('grade4Identity');
+        const savedEnemy = sessionStorage.getItem('grade4Enemy');
+
+        if (savedIdentity) {
+            nameInput.value = savedIdentity;
+        }
+
+        if (savedEnemy && enemies[savedEnemy]) {
+            selectedEnemy = savedEnemy;
+            const savedButton = document.querySelector(`.avatar[data-enemy="${savedEnemy}"]`);
+            if (savedButton) {
+                savedButton.classList.add('active');
+                if (savedEnemy === 'nil') savedButton.classList.add('revealed');
+            }
+            selectionLine.textContent = enemies[savedEnemy].description || `${enemies[savedEnemy].label} seleccionado.`;
+            renderEnemy(savedEnemy, { forceIdle: true });
+            updateBabyDemoButton();
+        }
+
+        function updateVerifyState() {
+            verifyBtn.disabled = demoRunning || !selectedEnemy || nameInput.value.trim().length === 0;
+        }
+
+        updateVerifyState();
+
+        function clearStages() {
+            enemyLeft.classList.remove('visible');
+            enemyRight.classList.remove('visible');
+            enemyLeft.innerHTML = '';
+            enemyRight.innerHTML = '';
+        }
+
+        function playSound(audio, volume = 0.9) {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = volume;
+            audio.play().catch(() => {});
+        }
+
+        function oneInSix() {
+            return Math.floor(Math.random() * 6) === 0;
+        }
+
+        function setControlsLocked(locked) {
+            demoRunning = locked;
+            avatarButtons.forEach((button) => {
+                button.disabled = locked;
+            });
+            nameInput.disabled = locked;
+            backBtn.disabled = locked;
+            babyDemoBtn.disabled = locked;
+            document.body.classList.toggle('demo-running', locked);
+            updateVerifyState();
+        }
+
+        function scheduleDemoStep(callback, delay) {
+            const timeout = setTimeout(callback, delay);
+            demoTimeouts.push(timeout);
+        }
+
+        function stopBabyDemo() {
+            enemyEffects.reset();
+            demoTimeouts.forEach((timeout) => clearTimeout(timeout));
+            demoTimeouts = [];
+            babyDemo.classList.remove('active');
+            babyDemoImages.forEach((image) => {
+                image.src = enemies.baby.animation;
+                image.classList.remove('seeking', 'locked', 'run', 'stunned');
+                image.style.left = '';
+            });
+            setControlsLocked(false);
+        }
+
+        function updateBabyDemoButton() {
+            babyDemoBtn.classList.toggle('visible', selectedEnemy === 'baby');
+        }
+
+        function startBabyDemo() {
+            stopBabyDemo();
+            setControlsLocked(true);
+            babyDemo.classList.add('active');
+            babyDemo.querySelectorAll('.demo-cursor, .demo-hit-flash').forEach((element) => {
+                element.style.animation = 'none';
+                element.offsetHeight;
+                element.style.animation = '';
+            });
+
+            babyDemoImages.forEach((image) => {
+                image.src = 'img (4to)/BabyLockOnTarget.gif';
+                image.classList.remove('run', 'stunned');
+                image.classList.add('seeking');
+            });
+            playSound(babyAudio.alarm, 0.85);
+
+            scheduleDemoStep(() => {
+                babyDemoImages.forEach((image) => {
+                    image.src = 'img (4to)/Babytransition.gif';
+                    image.classList.remove('seeking');
+                    image.classList.add('locked');
+                });
+            }, 1300);
+
+            scheduleDemoStep(() => {
+                babyDemoImages.forEach((image) => {
+                    image.src = 'img (4to)/Babycharge.gif';
+                    image.classList.remove('seeking', 'locked', 'stunned');
+                    image.classList.add('run');
+                });
+                playSound(babyAudio.charge, 0.9);
+            }, 2250);
+
+            scheduleDemoStep(() => {
+                babyDemoImages.forEach((image) => {
+                    image.classList.remove('run');
+                    image.classList.add('stunned');
+                });
+            }, 5450);
+
+            scheduleDemoStep(() => {
+                babyDemoImages.forEach((image) => {
+                    image.src = 'img (4to)/Babytransition.gif';
+                    image.classList.remove('stunned');
+                });
+            }, 6750);
+
+            scheduleDemoStep(() => {
+                stopBabyDemo();
+                renderEnemy('baby', { forceIdle: true });
+            }, 7900);
+        }
+
+        function renderEnemy(enemyKey, options = {}) {
+            const enemy = enemies[enemyKey];
+            const stage = enemy.side === 'left' ? enemyLeft : enemyRight;
+            clearStages();
+
+            const image = document.createElement('img');
+            const useFunny = !options.forceIdle && enemy.funny && oneInSix();
+            image.src = useFunny ? enemy.funny : enemy.animation;
+            image.alt = enemy.label;
+            stage.appendChild(image);
+            stage.classList.add('visible');
+            enemyEffects.start(enemyKey, { stage, avatar: image });
+
+            if (enemyKey === 'husk' && !options.forceIdle && oneInSix()) {
+                playSound(babyAudio.alarm, 0.85);
+                image.src = enemy.jumpscare;
+                setTimeout(() => {
+                    if (selectedEnemy === 'husk') {
+                        image.src = useFunny ? enemy.funny : enemy.animation;
+                    }
+                }, 1000);
+            }
+
+            if (enemyKey === 'baby' && !options.forceIdle) {
+                playSound(babyAudio.alarm, 0.85);
+            }
+        }
+
+        avatarButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                if (demoRunning) return;
+                const enemyKey = button.dataset.enemy;
+                const reselectingBell = selectedEnemy === 'bell' && enemyKey === 'bell';
+                if (reselectingBell) {
+                    enemyEffects.triggerBellReact();
+                    return;
+                }
+                selectedEnemy = enemyKey;
+
+                avatarButtons.forEach((avatar) => avatar.classList.remove('active'));
+                button.classList.add('active');
+                if (enemyKey === 'nil') button.classList.add('revealed');
+
+                selectionLine.textContent = enemies[enemyKey].description || `${enemies[enemyKey].label} seleccionado.`;
+                verifiedMessage.textContent = '';
+                renderEnemy(enemyKey);
+                updateBabyDemoButton();
+                updateVerifyState();
+            });
+        });
+
+        babyDemoBtn.addEventListener('click', () => {
+            if (selectedEnemy !== 'baby' || demoRunning) return;
+            startBabyDemo();
+        });
+
+        nameInput.addEventListener('input', () => {
+            verifiedMessage.textContent = '';
+            updateVerifyState();
+        });
+
+        verifyBtn.addEventListener('click', () => {
+            if (verifyBtn.disabled) return;
+            const identity = nameInput.value.trim();
+
+            sessionStorage.setItem('grade4Identity', identity);
+            sessionStorage.setItem('grade4Enemy', selectedEnemy);
+            window.location.href = 'index.html';
+        });
+
+        backBtn.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
+
